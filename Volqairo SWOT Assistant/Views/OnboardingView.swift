@@ -20,7 +20,7 @@ struct OnboardingView: View {
             VStack {
                 TabView(selection: $currentPage) {
                     OnboardingPage(
-                        icon: "theatermasks.fill",
+                        icon: "GameName",
                         title: "Welcome to Joqueve",
                         description: "Your AI-powered SWOT analysis assistant with circus magic!",
                         color: .orange
@@ -124,9 +124,19 @@ struct OnboardingPage: View {
     
     var body: some View {
         VStack(spacing: 30) {
-            Image(systemName: icon)
-                .font(.system(size: 80))
-                .foregroundColor(color)
+            // Check if it's a system icon or asset image
+            if icon.contains(".") {
+                // System icon
+                Image(systemName: icon)
+                    .font(.system(size: 80))
+                    .foregroundColor(color)
+            } else {
+                // Asset image
+                Image(icon)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 300, height: 300)
+            }
             
             VStack(spacing: 16) {
                 Text(title)
