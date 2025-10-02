@@ -6,13 +6,62 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		49D7D1F32E8E63070027C2BA /* NotificationAssistant.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 49D7D1EC2E8E63070027C2BA /* NotificationAssistant.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		49D7D1FD2E8E630D0027C2BA /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D7D1FA2E8E630D0027C2BA /* NotificationService.swift */; };
+		49D7D2042E8E64A90027C2BA /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 49D7D2032E8E64A90027C2BA /* FirebaseMessaging */; };
+		49D7D2072E8E64C00027C2BA /* AppsFlyerLib in Frameworks */ = {isa = PBXBuildFile; productRef = 49D7D2062E8E64C00027C2BA /* AppsFlyerLib */; };
+		49D7D2092E8E64EB0027C2BA /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 49D7D2082E8E64EB0027C2BA /* FirebaseMessaging */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		49D7D1F12E8E63070027C2BA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 495731BA2E83E433004F6701 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 49D7D1EB2E8E63070027C2BA;
+			remoteInfo = NotificationAssistant;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		49D7D1F42E8E63070027C2BA /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				49D7D1F32E8E63070027C2BA /* NotificationAssistant.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		495731C22E83E433004F6701 /* Volqairo SWOT Assistant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Volqairo SWOT Assistant.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		49D7D1EC2E8E63070027C2BA /* NotificationAssistant.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationAssistant.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		49D7D1F92E8E630D0027C2BA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		49D7D1FA2E8E630D0027C2BA /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		49D7D1FE2E8E63190027C2BA /* NotificationAssistant.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NotificationAssistant.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		49D7D25D2E8E75C10027C2BA /* Exceptions for "Volqairo SWOT Assistant" folder in "Volqairo SWOT Assistant" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 495731C12E83E433004F6701 /* Volqairo SWOT Assistant */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		495731C42E83E433004F6701 /* Volqairo SWOT Assistant */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				49D7D25D2E8E75C10027C2BA /* Exceptions for "Volqairo SWOT Assistant" folder in "Volqairo SWOT Assistant" target */,
+			);
 			path = "Volqairo SWOT Assistant";
 			sourceTree = "<group>";
 		};
@@ -23,6 +72,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49D7D2042E8E64A90027C2BA /* FirebaseMessaging in Frameworks */,
+				49D7D2072E8E64C00027C2BA /* AppsFlyerLib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49D7D1E92E8E63070027C2BA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49D7D2092E8E64EB0027C2BA /* FirebaseMessaging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				495731C42E83E433004F6701 /* Volqairo SWOT Assistant */,
+				49D7D1FB2E8E630D0027C2BA /* NotificationAssistant */,
 				495731C32E83E433004F6701 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,8 +101,19 @@
 			isa = PBXGroup;
 			children = (
 				495731C22E83E433004F6701 /* Volqairo SWOT Assistant.app */,
+				49D7D1EC2E8E63070027C2BA /* NotificationAssistant.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		49D7D1FB2E8E630D0027C2BA /* NotificationAssistant */ = {
+			isa = PBXGroup;
+			children = (
+				49D7D1FE2E8E63190027C2BA /* NotificationAssistant.entitlements */,
+				49D7D1F92E8E630D0027C2BA /* Info.plist */,
+				49D7D1FA2E8E630D0027C2BA /* NotificationService.swift */,
+			);
+			path = NotificationAssistant;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -55,20 +126,44 @@
 				495731BE2E83E433004F6701 /* Sources */,
 				495731BF2E83E433004F6701 /* Frameworks */,
 				495731C02E83E433004F6701 /* Resources */,
+				49D7D1F42E8E63070027C2BA /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				49D7D1F22E8E63070027C2BA /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				495731C42E83E433004F6701 /* Volqairo SWOT Assistant */,
 			);
 			name = "Volqairo SWOT Assistant";
 			packageProductDependencies = (
+				49D7D2032E8E64A90027C2BA /* FirebaseMessaging */,
+				49D7D2062E8E64C00027C2BA /* AppsFlyerLib */,
 			);
 			productName = "Volqairo SWOT Assistant";
 			productReference = 495731C22E83E433004F6701 /* Volqairo SWOT Assistant.app */;
 			productType = "com.apple.product-type.application";
+		};
+		49D7D1EB2E8E63070027C2BA /* NotificationAssistant */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 49D7D1F82E8E63070027C2BA /* Build configuration list for PBXNativeTarget "NotificationAssistant" */;
+			buildPhases = (
+				49D7D1E82E8E63070027C2BA /* Sources */,
+				49D7D1E92E8E63070027C2BA /* Frameworks */,
+				49D7D1EA2E8E63070027C2BA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NotificationAssistant;
+			packageProductDependencies = (
+				49D7D2082E8E64EB0027C2BA /* FirebaseMessaging */,
+			);
+			productName = NotificationAssistant;
+			productReference = 49D7D1EC2E8E63070027C2BA /* NotificationAssistant.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -77,11 +172,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1640;
+				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
 					495731C12E83E433004F6701 = {
 						CreatedOnToolsVersion = 16.4;
+					};
+					49D7D1EB2E8E63070027C2BA = {
+						CreatedOnToolsVersion = 26.0.1;
 					};
 				};
 			};
@@ -94,18 +192,30 @@
 			);
 			mainGroup = 495731B92E83E433004F6701;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				49D7D2022E8E64A90027C2BA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				49D7D2052E8E64C00027C2BA /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 495731C32E83E433004F6701 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				495731C12E83E433004F6701 /* Volqairo SWOT Assistant */,
+				49D7D1EB2E8E63070027C2BA /* NotificationAssistant */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		495731C02E83E433004F6701 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49D7D1EA2E8E63070027C2BA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +232,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		49D7D1E82E8E63070027C2BA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49D7D1FD2E8E630D0027C2BA /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		49D7D1F22E8E63070027C2BA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 49D7D1EB2E8E63070027C2BA /* NotificationAssistant */;
+			targetProxy = 49D7D1F12E8E63070027C2BA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		495731E12E83E435004F6701 /* Debug */ = {
@@ -162,7 +288,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -225,7 +351,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -249,16 +375,20 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Volqairo SWOT Assistant/Volqairo SWOT Assistant.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Volqairo SWOT Assistant/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Joqueve Swot Assistant";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -282,16 +412,20 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Volqairo SWOT Assistant/Volqairo SWOT Assistant.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Volqairo SWOT Assistant/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Joqueve Swot Assistant";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -307,6 +441,66 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		49D7D1F52E8E63070027C2BA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NotificationAssistant/NotificationAssistant.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NotificationAssistant/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NotificationAssistant;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.toxismtieqjocota.uvesfaspswasivxon.NotificationAssistant;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		49D7D1F62E8E63070027C2BA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NotificationAssistant/NotificationAssistant.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NotificationAssistant/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NotificationAssistant;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.toxismtieqjocota.uvesfaspswasivxon.NotificationAssistant;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -331,7 +525,53 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		49D7D1F82E8E63070027C2BA /* Build configuration list for PBXNativeTarget "NotificationAssistant" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				49D7D1F52E8E63070027C2BA /* Debug */,
+				49D7D1F62E8E63070027C2BA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		49D7D2022E8E64A90027C2BA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.3.0;
+			};
+		};
+		49D7D2052E8E64C00027C2BA /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AppsFlyerSDK/AppsFlyerFramework.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.17.6;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		49D7D2032E8E64A90027C2BA /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 49D7D2022E8E64A90027C2BA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		49D7D2062E8E64C00027C2BA /* AppsFlyerLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 49D7D2052E8E64C00027C2BA /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */;
+			productName = AppsFlyerLib;
+		};
+		49D7D2082E8E64EB0027C2BA /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 49D7D2022E8E64A90027C2BA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 495731BA2E83E433004F6701 /* Project object */;
 }

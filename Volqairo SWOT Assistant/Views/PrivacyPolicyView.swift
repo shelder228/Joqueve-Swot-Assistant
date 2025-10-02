@@ -81,6 +81,10 @@ struct PrivacyPolicyView: View {
                 }
             }
         }
+        .onAppear {
+            // Устанавливаем портретную ориентацию
+            OrientationManager.restrictToPortrait()
+        }
     }
 }
 

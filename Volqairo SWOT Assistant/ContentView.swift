@@ -48,6 +48,9 @@ struct ContentView: View {
                     }
                 )
                 .onAppear {
+                    // Устанавливаем портретную ориентацию
+                    OrientationManager.restrictToPortrait()
+                    
                     // Настройки для iPad
                     if UIDevice.current.userInterfaceIdiom == .pad {
                         // Дополнительные настройки для iPad при необходимости

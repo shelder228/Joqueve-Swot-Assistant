@@ -71,6 +71,10 @@ struct SupportView: View {
                 }
             }
         }
+        .onAppear {
+            // Устанавливаем портретную ориентацию
+            OrientationManager.restrictToPortrait()
+        }
     }
 }
 

@@ -189,6 +189,10 @@ struct InputView: View {
                 }
             }
         }
+        .onAppear {
+            // Устанавливаем портретную ориентацию
+            OrientationManager.restrictToPortrait()
+        }
     }
     
     private func clearAllFields() {

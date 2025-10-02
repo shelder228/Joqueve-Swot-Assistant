@@ -113,6 +113,10 @@ struct OnboardingView: View {
                 .padding(.bottom, 50)
             }
         }
+        .onAppear {
+            // Устанавливаем портретную ориентацию
+            OrientationManager.restrictToPortrait()
+        }
     }
 }
 

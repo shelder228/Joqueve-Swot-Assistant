@@ -84,6 +84,9 @@ struct AnalysisDetailView: View {
             }
         }
         .onAppear {
+            // Устанавливаем портретную ориентацию
+            OrientationManager.restrictToPortrait()
+            
             print("AnalysisDetailView appeared for: \(analysis.title)")
             print("Analysis result length: \(analysis.analysisResult.count)")
             print("Analysis result: \(analysis.analysisResult)")

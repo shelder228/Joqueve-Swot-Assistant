@@ -75,6 +75,9 @@ struct AnalysisResultsSheet: View {
             }
         }
         .onAppear {
+            // Устанавливаем портретную ориентацию
+            OrientationManager.restrictToPortrait()
+            
             parseAnalysisResult()
         }
     }

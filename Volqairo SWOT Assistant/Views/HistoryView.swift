@@ -87,6 +87,10 @@ struct HistoryView: View {
                 AnalysisDetailView(analysis: analysis)
             }
         }
+        .onAppear {
+            // Устанавливаем портретную ориентацию
+            OrientationManager.restrictToPortrait()
+        }
     }
 }
 

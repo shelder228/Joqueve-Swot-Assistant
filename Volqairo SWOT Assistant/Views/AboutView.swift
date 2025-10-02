@@ -84,6 +84,10 @@ struct AboutView: View {
                 }
             }
         }
+        .onAppear {
+            // Устанавливаем портретную ориентацию
+            OrientationManager.restrictToPortrait()
+        }
     }
 }
 

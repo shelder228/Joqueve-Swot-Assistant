@@ -115,6 +115,10 @@ struct TipsView: View {
                 }
             }
         }
+        .onAppear {
+            // Устанавливаем портретную ориентацию
+            OrientationManager.restrictToPortrait()
+        }
     }
 }
 

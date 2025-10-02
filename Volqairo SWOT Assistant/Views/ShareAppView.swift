@@ -109,5 +109,9 @@ struct ShareAppView: View {
                 ])
             }
         }
+        .onAppear {
+            // Устанавливаем портретную ориентацию
+            OrientationManager.restrictToPortrait()
+        }
     }
 }

@@ -1,11 +1,40 @@
 import SwiftUI
 
+enum AppState {
+    case trackingPermission
+    case loading
+    case main
+}
+
 @main
-struct Joqueve_SWOT_AssistantApp: App {
+struct Volqairo_SWOT_AssistantApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @State private var currentAppState: AppState = .trackingPermission
+    
+    init() {
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .preferredColorScheme(.dark)
+            Group {
+                switch currentAppState {
+                case .trackingPermission:
+                    ScreenView(onStateTransition: { newState in
+                        currentAppState = newState
+                    })
+                case .loading:
+                    StartingView(onStateTransition: { newState in
+                        currentAppState = newState
+                    })
+                case .main:
+                    ContentView()
+                        .preferredColorScheme(.dark)
+                }
+            }
+            .onAppear {
+                print("App state: \(currentAppState)")
+            }
         }
     }
 }
+

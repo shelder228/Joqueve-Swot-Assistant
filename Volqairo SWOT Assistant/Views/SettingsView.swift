@@ -78,6 +78,10 @@ struct SettingsView: View {
                 ShareAppView()
             }
         }
+        .onAppear {
+            // Устанавливаем портретную ориентацию
+            OrientationManager.restrictToPortrait()
+        }
     }
     
     private func openPrivacyPolicy() {
