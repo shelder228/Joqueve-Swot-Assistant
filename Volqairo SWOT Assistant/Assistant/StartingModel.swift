@@ -29,8 +29,8 @@ class StartingModel: NSObject, ObservableObject {
     private let savedUrlKey = "CACHED_LAST_URL"
     private let launchStatusKey = "APPLICATION_LAUNCH_STATE"
     private let notificationDelayKey = "NOTIFICATION_DELAY_TIME"
-    private let fcmTokenKey = "FCM_DEVICE_TOKEN"
-    private let pushActiveFlagKey = "PUSH_ACTIVE_STATUS"
+    private let fcmTokenKey = "FIREBASE_MESSAGING_TOKEN"
+    private let pushActiveFlagKey = "PUSH_LAUNCH_FLAG"
     
     private let maxRetryAttempts = 18 * 5
     private let connectionCheckInterval: TimeInterval = 1.0
