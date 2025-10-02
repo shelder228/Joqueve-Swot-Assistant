@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+            </array>
+        </dict>
+    </array>
+    <key>FirebaseAppDelegateProxyEnabled</key>
+    <false/>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <false/>
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>remote-notification</string>
+    </array>
+    <key>NSCameraUsageDescription</key>
+    <string>This app needs camera access to capture photos and documents for your SWOT analysis and strategic planning</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This app needs microphone access to record audio notes and voice memos for your business analysis</string>
+    <key>NSPhotoLibraryAdditionsUsageDescription</key>
+    <string>This app needs photo library access to save your SWOT analysis charts, diagrams and strategic documents</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs photo library access to let you select and use your own images and documents in SWOT analysis</string>
+    <key>NSUserTrackingUsageDescription</key>
+    <string>This app would like to track you across apps and websites to provide personalized business insights and strategic recommendations</string>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+</dict>
+</plist>
