@@ -46,9 +46,22 @@
 		49D7D1FE2E8E63190027C2BA /* NotificationAssistant.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NotificationAssistant.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		491E51402E8EB53B00C85812 /* Exceptions for "Volqairo SWOT Assistant" folder in "Volqairo SWOT Assistant" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 495731C12E83E433004F6701 /* Volqairo SWOT Assistant */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		495731C42E83E433004F6701 /* Volqairo SWOT Assistant */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				491E51402E8EB53B00C85812 /* Exceptions for "Volqairo SWOT Assistant" folder in "Volqairo SWOT Assistant" target */,
+			);
 			path = "Volqairo SWOT Assistant";
 			sourceTree = "<group>";
 		};
