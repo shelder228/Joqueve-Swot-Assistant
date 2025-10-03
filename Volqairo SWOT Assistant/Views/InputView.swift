@@ -191,7 +191,7 @@ struct InputView: View {
         }
         .onAppear {
             // Устанавливаем портретную ориентацию
-            OrientationManager.setPortraitOnly()
+            OrientationManager.restrictToPortrait()
         }
     }
     

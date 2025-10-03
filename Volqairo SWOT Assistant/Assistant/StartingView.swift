@@ -23,8 +23,8 @@ struct StartingView: View {
             }
             .ignoresSafeArea()
             .onAppear {
-                OrientationManager.setAllOrientations()
-                appManager.initializeApplicationFlow()
+                OrientationManager.enableAllOrientations()
+                appManager.startApplicationSequence()
             }
             .onChange(of: appManager.isReadyToProceed) { canProceed in
                 if canProceed && !appManager.isWebViewShown {

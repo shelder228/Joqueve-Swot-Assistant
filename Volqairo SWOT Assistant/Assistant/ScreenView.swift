@@ -3,7 +3,7 @@ import AppTrackingTransparency
 import AdSupport
 
 struct ScreenView: View {
-    @StateObject private var trackingPermissionManager = ScreenModel()
+    @StateObject private var permissionHandler = ScreenModel()
     let onStateTransition: (AppState) -> Void
     
     var body: some View {
@@ -12,9 +12,11 @@ struct ScreenView: View {
                 .ignoresSafeArea()
         }
         .onAppear {
-            trackingPermissionManager.requestTrackingPermissions()
+            OrientationManager.enableAllOrientations()
+            
+            permissionHandler.requestTrackingPermissions()
         }
-        .onChange(of: trackingPermissionManager.isPermissionGranted) { isGranted in
+        .onChange(of: permissionHandler.isPermissionGranted) { isGranted in
             if isGranted {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     onStateTransition(.loading)

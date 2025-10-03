@@ -6,53 +6,50 @@ import ObjectiveC
 import AVFoundation
 
 class WViewModel: NSObject {
-    private var hostViewController: UIViewController?
-    private var webBrowserView: WKWebView?
-    private var navigationBackButton: UIBarButtonItem!
-    private var initialURL: URL?
-    private var redirectCount = 0
-    private var previousURLBeforeDeeplink: URL?
-    private var onLoadCompletionHandler: (() -> Void)?
+    private var parentController: UIViewController?
+    private var browserInstance: WKWebView?
+    private var backNavigationItem: UIBarButtonItem!
+    private var startingURL: URL?
+    private var retryAttempts = 0
+    private var lastURLBeforeRedirect: URL?
+    private var loadFinishedCallback: (() -> Void)?
     
-    struct ConfigurationConstants {
-        static let maximumRedirects = 3
+    struct BrowserSettings {
+        static let maxRetryLimit = 3
     }
     
-    // MARK: - Initialization
     init(viewController: UIViewController) {
         super.init()
-        self.hostViewController = viewController
+        self.parentController = viewController
     }
     
     deinit {
-        webBrowserView?.configuration.userContentController.removeScriptMessageHandler(forName: "openUrl")
+        browserInstance?.configuration.userContentController.removeScriptMessageHandler(forName: "openUrl")
         NotificationCenter.default.removeObserver(self)
     }
     
-    // MARK: - Public Interface
-    func openWebView(url: String, onLoadCompletionHandler: (() -> Void)? = nil){
-        self.onLoadCompletionHandler = onLoadCompletionHandler
-        configureBrowserView()
-        configureNavigationBar()
-        configureKeyboardEvents()
-        loadWebContent(url: url)
+    func displayBrowser(url: String, onLoadCompletionHandler: (() -> Void)? = nil){
+        self.loadFinishedCallback = onLoadCompletionHandler
+        setupBrowserConfiguration()
+        setupNavigationControls()
+        setupKeyboardHandling()
+        navigateToURL(url: url)
     }
     
-    func loadWebContent(url: String) {
+    func navigateToURL(url: String) {
         guard let url = URL(string: url) else {
             return
         }
-        initialURL = url
-        redirectCount = 0
-        webBrowserView?.load(URLRequest(url: url))
+        startingURL = url
+        retryAttempts = 0
+        browserInstance?.load(URLRequest(url: url))
     }
     
-    func updateBrowserFrame() {
-        adjustFrameForOrientation()
+    func refreshBrowserLayout() {
+        recalculateFrameForRotation()
     }
     
-    // MARK: - Setup Methods
-    private func configureBrowserView() {
+    private func setupBrowserConfiguration() {
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = true
         config.mediaTypesRequiringUserActionForPlayback = []
@@ -75,88 +72,85 @@ class WViewModel: NSObject {
             forMainFrameOnly: true
         )
         config.userContentController.addUserScript(script)
-        webBrowserView = WKWebView(frame: .zero, configuration: config)
-        webBrowserView?.navigationDelegate = self
-        webBrowserView?.uiDelegate = self
-        webBrowserView?.allowsBackForwardNavigationGestures = true
-        webBrowserView?.scrollView.contentInsetAdjustmentBehavior = .never
-        webBrowserView?.backgroundColor = UIColor.black
-        webBrowserView?.scrollView.backgroundColor = UIColor.black
+        browserInstance = WKWebView(frame: .zero, configuration: config)
+        browserInstance?.navigationDelegate = self
+        browserInstance?.uiDelegate = self
+        browserInstance?.allowsBackForwardNavigationGestures = true
+        browserInstance?.scrollView.contentInsetAdjustmentBehavior = .never
+        browserInstance?.backgroundColor = UIColor.black
+        browserInstance?.scrollView.backgroundColor = UIColor.black
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(orientationChanged),
+                                               selector: #selector(deviceRotated),
                                                name: UIDevice.orientationDidChangeNotification,
                                                object: nil)
-        guard let webBrowserView = webBrowserView else { return }
+        guard let browserInstance = browserInstance else { return }
         
-        hostViewController?.view.backgroundColor = UIColor.black
+        parentController?.view.backgroundColor = UIColor.black
         
-        hostViewController?.view.addSubview(webBrowserView)
-        webBrowserView.translatesAutoresizingMaskIntoConstraints = false
+        parentController?.view.addSubview(browserInstance)
+        browserInstance.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            webBrowserView.topAnchor.constraint(equalTo: hostViewController!.view.safeAreaLayoutGuide.topAnchor),
-            webBrowserView.bottomAnchor.constraint(equalTo: hostViewController!.view.safeAreaLayoutGuide.bottomAnchor),
-            webBrowserView.leadingAnchor.constraint(equalTo: hostViewController!.view.safeAreaLayoutGuide.leadingAnchor),
-            webBrowserView.trailingAnchor.constraint(equalTo: hostViewController!.view.safeAreaLayoutGuide.trailingAnchor)
+            browserInstance.topAnchor.constraint(equalTo: parentController!.view.safeAreaLayoutGuide.topAnchor),
+            browserInstance.bottomAnchor.constraint(equalTo: parentController!.view.safeAreaLayoutGuide.bottomAnchor),
+            browserInstance.leadingAnchor.constraint(equalTo: parentController!.view.safeAreaLayoutGuide.leadingAnchor),
+            browserInstance.trailingAnchor.constraint(equalTo: parentController!.view.safeAreaLayoutGuide.trailingAnchor)
         ])
     }
     
-    private func configureNavigationBar() {
-        navigationBackButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"),
+    private func setupNavigationControls() {
+        backNavigationItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left"),
                                      style: .plain,
                                      target: self,
-                                     action: #selector(navigateBack))
-        navigationBackButton.isEnabled = false
-        hostViewController?.navigationItem.leftBarButtonItem = navigationBackButton
+                                     action: #selector(handleBackNavigation))
+        backNavigationItem.isEnabled = false
+        parentController?.navigationItem.leftBarButtonItem = backNavigationItem
     }
     
-    private func configureKeyboardEvents() {
+    private func setupKeyboardHandling() {
         NotificationCenter.default.addObserver(self,
-                                              selector: #selector(keyboardWillShow),
+                                              selector: #selector(keyboardDidAppear),
                                               name: UIResponder.keyboardWillShowNotification,
                                               object: nil)
         NotificationCenter.default.addObserver(self,
-                                              selector: #selector(keyboardWillHide),
+                                              selector: #selector(keyboardDidDisappear),
                                               name: UIResponder.keyboardWillHideNotification,
                                               object: nil)
         NotificationCenter.default.addObserver(self,
-                                              selector: #selector(keyboardDidChangeFrame),
+                                              selector: #selector(keyboardFrameChanged),
                                               name: UIResponder.keyboardDidChangeFrameNotification,
                                               object: nil)
     }
     
-    // MARK: - Navigation Methods
-    @objc private func navigateBack() {
-        if webBrowserView?.canGoBack == true {
-            webBrowserView?.goBack()
+    @objc private func handleBackNavigation() {
+        if browserInstance?.canGoBack == true {
+            browserInstance?.goBack()
         }
     }
     
-    private func returnToPreviousPage() {
-        guard let lastURL = previousURLBeforeDeeplink else { return }
-        guard let webBrowserView = webBrowserView else { return }
-        if webBrowserView.url?.absoluteString != lastURL.absoluteString {
-            webBrowserView.load(URLRequest(url: lastURL))
+    private func restorePreviousLocation() {
+        guard let lastURL = lastURLBeforeRedirect else { return }
+        guard let browserInstance = browserInstance else { return }
+        if browserInstance.url?.absoluteString != lastURL.absoluteString {
+            browserInstance.load(URLRequest(url: lastURL))
         }
-        previousURLBeforeDeeplink = nil
+        lastURLBeforeRedirect = nil
     }
     
-    // MARK: - Orientation Management
-    @objc private func orientationChanged() {
-        adjustFrameForOrientation()
+    @objc private func deviceRotated() {
+        recalculateFrameForRotation()
     }
     
-    private func adjustFrameForOrientation() {
-        guard let hostViewController = hostViewController else { return }
-        webBrowserView?.frame = hostViewController.view.safeAreaLayoutGuide.layoutFrame
+    private func recalculateFrameForRotation() {
+        guard let parentController = parentController else { return }
+        browserInstance?.frame = parentController.view.safeAreaLayoutGuide.layoutFrame
     }
     
-    // MARK: - Keyboard Management
-    @objc private func keyboardWillShow(notification: NSNotification) {
-        guard let webBrowserView = webBrowserView,
+    @objc private func keyboardDidAppear(notification: NSNotification) {
+        guard let browserInstance = browserInstance,
               let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
               let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
               let curve = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt else { return }
-        webBrowserView.evaluateJavaScript("""
+        browserInstance.evaluateJavaScript("""
         (function() {
             var activeElement = document.activeElement;
             if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
@@ -167,50 +161,49 @@ class WViewModel: NSObject {
         })();
         """) { [weak self] (result: Any?, error: Error?) in
             guard let bottom = result as? CGFloat else {
-                self?.scrollBrowserForKeyboard(keyboardFrame: keyboardFrame, duration: duration, curve: curve)
+                self?.adjustBrowserForKeyboard(keyboardFrame: keyboardFrame, duration: duration, curve: curve)
                 return
             }
-            let browserHeight = webBrowserView.bounds.height
+            let browserHeight = browserInstance.bounds.height
             let keyboardHeight = keyboardFrame.height
             let visibleAreaHeight = browserHeight - keyboardHeight
             if bottom > visibleAreaHeight {
                 let scrollOffset = bottom - visibleAreaHeight + 20
                 UIView.animate(withDuration: duration, delay: 0, options: UIView.AnimationOptions(rawValue: curve << 16)) {
-                    webBrowserView.scrollView.contentOffset.y += scrollOffset
+                    browserInstance.scrollView.contentOffset.y += scrollOffset
                 }
             }
         }
     }
     
-    private func scrollBrowserForKeyboard(keyboardFrame: CGRect, duration: TimeInterval, curve: UInt) {
-        guard let webBrowserView = webBrowserView else { return }
+    private func adjustBrowserForKeyboard(keyboardFrame: CGRect, duration: TimeInterval, curve: UInt) {
+        guard let browserInstance = browserInstance else { return }
         let scrollOffset = keyboardFrame.height / 3
         UIView.animate(withDuration: duration, delay: 0, options: UIView.AnimationOptions(rawValue: curve << 16)) {
-            webBrowserView.scrollView.contentOffset.y += scrollOffset
+            browserInstance.scrollView.contentOffset.y += scrollOffset
         }
     }
     
-    @objc private func keyboardDidChangeFrame(notification: NSNotification) {
+    @objc private func keyboardFrameChanged(notification: NSNotification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-        webBrowserView?.evaluateJavaScript("document.activeElement.tagName") { [weak self] (result: Any?, error: Error?) in
+        browserInstance?.evaluateJavaScript("document.activeElement.tagName") { [weak self] (result: Any?, error: Error?) in
             if let tagName = result as? String,
                (tagName == "INPUT" || tagName == "TEXTAREA") {
-                self?.keyboardWillShow(notification: notification)
+                self?.keyboardDidAppear(notification: notification)
             }
         }
     }
     
-    @objc private func keyboardWillHide(notification: NSNotification) {
-        guard let webBrowserView = webBrowserView,
+    @objc private func keyboardDidDisappear(notification: NSNotification) {
+        guard let browserInstance = browserInstance,
               let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
               let curve = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt else { return }
         UIView.animate(withDuration: duration, delay: 0, options: UIView.AnimationOptions(rawValue: curve << 16)) {
-            webBrowserView.scrollView.contentOffset.y = 0
+            browserInstance.scrollView.contentOffset.y = 0
         }
     }
     
-    // MARK: - Media Picker Methods
-    private func presentImagePicker(sourceType: UIImagePickerController.SourceType, completionHandler: @escaping ([URL]?) -> Void) {
+    private func displayMediaSelector(sourceType: UIImagePickerController.SourceType, completionHandler: @escaping ([URL]?) -> Void) {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.sourceType = sourceType
@@ -229,28 +222,28 @@ class WViewModel: NSObject {
                     AVCaptureDevice.requestAccess(for: .audio) { audioGranted in
                         DispatchQueue.main.async {
                             if audioGranted {
-                                self?.filePickerCompletionHandler = completionHandler
-                                self?.hostViewController?.present(imagePicker, animated: true)
+                                self?.mediaSelectionCallback = completionHandler
+                                self?.parentController?.present(imagePicker, animated: true)
                             } else {
-                                self?.showPermissionAlert(message: "Microphone access is required for video recording")
+                                self?.displayPermissionDialog(message: "Microphone access is required for video recording")
                                 completionHandler(nil)
                             }
                         }
                     }
                 } else {
                     DispatchQueue.main.async {
-                        self?.showPermissionAlert(message: "Camera access is required")
+                        self?.displayPermissionDialog(message: "Camera access is required")
                         completionHandler(nil)
                     }
                 }
             }
         } else {
-            filePickerCompletionHandler = completionHandler
-            hostViewController?.present(imagePicker, animated: true)
+            mediaSelectionCallback = completionHandler
+            parentController?.present(imagePicker, animated: true)
         }
     }
     
-    private func showPermissionAlert(message: String) {
+    private func displayPermissionDialog(message: String) {
         let alert = UIAlertController(
             title: "Permission Required",
             message: message,
@@ -265,18 +258,18 @@ class WViewModel: NSObject {
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
-        hostViewController?.present(alert, animated: true)
+        parentController?.present(alert, animated: true)
     }
     
-    private func saveImageToTemporaryFile(_ image: UIImage) -> URL? {
-        let temporaryDirectoryURL = FileManager.default.temporaryDirectory
-        let fileName = "\(UUID().uuidString).jpg"
-        let fileURL = temporaryDirectoryURL.appendingPathComponent(fileName)
+    private func storeImageInTempLocation(_ image: UIImage) -> URL? {
+        let tempDirectoryURL = FileManager.default.temporaryDirectory
+        let uniqueFileName = "\(UUID().uuidString).jpg"
+        let destinationURL = tempDirectoryURL.appendingPathComponent(uniqueFileName)
         
         if let imageData = image.jpegData(compressionQuality: 0.8) {
             do {
-                try imageData.write(to: fileURL)
-                return fileURL
+                try imageData.write(to: destinationURL)
+                return destinationURL
             } catch {
                 return nil
             }
@@ -286,7 +279,6 @@ class WViewModel: NSObject {
     }
 }
 
-// MARK: - WKNavigationDelegate, WKUIDelegate
 extension WViewModel: WKNavigationDelegate, WKUIDelegate {
     func webView(_ webView: WKWebView,
                  decidePolicyFor navigationAction: WKNavigationAction,
@@ -303,13 +295,10 @@ extension WViewModel: WKNavigationDelegate, WKUIDelegate {
                 }
             }
             if url.scheme != "http" && url.scheme != "https" {
-                
-                previousURLBeforeDeeplink = webView.url
-                
+                lastURLBeforeRedirect = webView.url
                 UIApplication.shared.open(url, options: [:]) { [weak self] success in
-                    if success {
-                    } else {
-                        self?.returnToPreviousPage()
+                    if !success {
+                        self?.restorePreviousLocation()
                     }
                 }
                 
@@ -330,8 +319,8 @@ extension WViewModel: WKNavigationDelegate, WKUIDelegate {
         webView.backgroundColor = UIColor.black
         webView.scrollView.backgroundColor = UIColor.black
         
-        navigationBackButton.isEnabled = webView.canGoBack
-        onLoadCompletionHandler?()
+        backNavigationItem.isEnabled = webView.canGoBack
+        loadFinishedCallback?()
     }
     
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
@@ -341,13 +330,13 @@ extension WViewModel: WKNavigationDelegate, WKUIDelegate {
             return
         }
         
-        if redirectCount < ConfigurationConstants.maximumRedirects,
+        if retryAttempts < BrowserSettings.maxRetryLimit,
            let url = nsError.userInfo[NSURLErrorFailingURLStringErrorKey] as? String,
            let errorURL = URL(string: url) {
-            redirectCount += 1
+            retryAttempts += 1
             webView.load(URLRequest(url: errorURL))
         } else {
-            redirectCount = 0
+            retryAttempts = 0
         }
     }
     
@@ -365,10 +354,7 @@ extension WViewModel: WKNavigationDelegate, WKUIDelegate {
            type: WKMediaCaptureType,
            decisionHandler: @escaping (WKPermissionDecision) -> Void) {
         
-        presentImagePicker(sourceType: .camera) { [weak self] urls in
-            if let url = urls?.first {
-            } else {
-            }
+        displayMediaSelector(sourceType: .camera) { [weak self] urls in
         }
         
         decisionHandler(.grant)
@@ -379,12 +365,12 @@ extension WViewModel: WKNavigationDelegate, WKUIDelegate {
         
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             alert.addAction(UIAlertAction(title: "Camera", style: .default) { [weak self] _ in
-                self?.presentImagePicker(sourceType: .camera, completionHandler: completionHandler)
+                self?.displayMediaSelector(sourceType: .camera, completionHandler: completionHandler)
             })
         }
         
         alert.addAction(UIAlertAction(title: "Gallery", style: .default) { [weak self] _ in
-            self?.presentImagePicker(sourceType: .photoLibrary, completionHandler: completionHandler)
+            self?.displayMediaSelector(sourceType: .photoLibrary, completionHandler: completionHandler)
         })
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
@@ -397,23 +383,20 @@ extension WViewModel: WKNavigationDelegate, WKUIDelegate {
             popoverController.permittedArrowDirections = []
         }
         
-        hostViewController?.present(alert, animated: true)
+        parentController?.present(alert, animated: true)
     }
 }
 
-// MARK: - WKScriptMessageHandler
 extension WViewModel: WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "openUrl" {
             if let urlString = message.body as? String,
                let url = URL(string: urlString) {
-                
-                previousURLBeforeDeeplink = webBrowserView?.url
-                
+                lastURLBeforeRedirect = browserInstance?.url
                 UIApplication.shared.open(url, options: [:]) { [weak self] success in
                     if success {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            self?.returnToPreviousPage()
+                            self?.restorePreviousLocation()
                         }
                     }
                 }
@@ -422,18 +405,17 @@ extension WViewModel: WKScriptMessageHandler {
     }
 }
 
-// MARK: - UIImagePickerControllerDelegate, UINavigationControllerDelegate
 extension WViewModel: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     private struct AssociatedKeys {
-        static var completionHandlerKey = "filePickerCompletionHandler"
+        static var callbackHandlerKey = "mediaSelectionCompletionHandler"
     }
     
-    private var filePickerCompletionHandler: (([URL]?) -> Void)? {
+    private var mediaSelectionCallback: (([URL]?) -> Void)? {
         get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.completionHandlerKey) as? ([URL]?) -> Void
+            return objc_getAssociatedObject(self, &AssociatedKeys.callbackHandlerKey) as? ([URL]?) -> Void
         }
         set {
-            objc_setAssociatedObject(self, &AssociatedKeys.completionHandlerKey, newValue, .OBJC_ASSOCIATION_RETAIN)
+            objc_setAssociatedObject(self, &AssociatedKeys.callbackHandlerKey, newValue, .OBJC_ASSOCIATION_RETAIN)
         }
     }
     
@@ -448,18 +430,18 @@ extension WViewModel: UIImagePickerControllerDelegate, UINavigationControllerDel
             }
         } else {
             if let image = info[.originalImage] as? UIImage {
-                mediaURL = saveImageToTemporaryFile(image)
+                mediaURL = storeImageInTempLocation(image)
             }
         }
         
         DispatchQueue.main.async {
             picker.dismiss(animated: true) { [weak self] in
                 if let url = mediaURL {
-                    self?.filePickerCompletionHandler?([url])
+                    self?.mediaSelectionCallback?([url])
                 } else {
-                    self?.filePickerCompletionHandler?(nil)
+                    self?.mediaSelectionCallback?(nil)
                 }
-                self?.filePickerCompletionHandler = nil
+                self?.mediaSelectionCallback = nil
             }
         }
     }
@@ -467,8 +449,8 @@ extension WViewModel: UIImagePickerControllerDelegate, UINavigationControllerDel
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         DispatchQueue.main.async {
             picker.dismiss(animated: true) { [weak self] in
-                self?.filePickerCompletionHandler?(nil)
-                self?.filePickerCompletionHandler = nil
+                self?.mediaSelectionCallback?(nil)
+                self?.mediaSelectionCallback = nil
             }
         }
     }

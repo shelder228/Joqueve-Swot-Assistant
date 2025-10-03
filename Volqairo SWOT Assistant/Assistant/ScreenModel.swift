@@ -6,41 +6,41 @@ import Combine
 class ScreenModel: ObservableObject {
     @Published var isPermissionGranted = false
     
-    private let userDefaultsManager = UserDefaults.standard
-    private let deviceAdvertisingIdKey = "DEVICE_ADVERTISING_IDENTIFIER"
+    private let preferencesStorage = UserDefaults.standard
+    private let advertisingIdStorageKey = "DEVICE_ADVERTISING_IDENTIFIER"
     
     func requestTrackingPermissions() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.handleTrackingPermissionRequest()
+            self.processPermissionRequest()
         }
     }
     
-    private func handleTrackingPermissionRequest() {
+    private func processPermissionRequest() {
         if #available(iOS 14, *) {
-            let currentStatus = ATTrackingManager.trackingAuthorizationStatus
-            if currentStatus == .notDetermined {
+            let authorizationStatus = ATTrackingManager.trackingAuthorizationStatus
+            if authorizationStatus == .notDetermined {
                 ATTrackingManager.requestTrackingAuthorization { [weak self] _ in
-                    self?.persistAdvertisingIdentifier()
+                    self?.saveDeviceIdentifier()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        self?.advanceToNextPhase()
+                        self?.proceedToNextStep()
                     }
                 }
                 return
             }
         }
-        persistAdvertisingIdentifier()
+        saveDeviceIdentifier()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.advanceToNextPhase()
+            self.proceedToNextStep()
         }
     }
     
-    private func persistAdvertisingIdentifier() {
-        let deviceID = ASIdentifierManager.shared().advertisingIdentifier.uuidString
-        userDefaultsManager.set(deviceID, forKey: deviceAdvertisingIdKey)
-        userDefaultsManager.synchronize()
+    private func saveDeviceIdentifier() {
+        let advertisingId = ASIdentifierManager.shared().advertisingIdentifier.uuidString
+        preferencesStorage.set(advertisingId, forKey: advertisingIdStorageKey)
+        preferencesStorage.synchronize()
     }
     
-    private func advanceToNextPhase() {
+    private func proceedToNextStep() {
         DispatchQueue.main.async {
             self.isPermissionGranted = true
         }

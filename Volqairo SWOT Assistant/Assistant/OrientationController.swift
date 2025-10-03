@@ -1,17 +1,17 @@
 import UIKit
 
 class OrientationManager {
-    static var allowedOrientations: UIInterfaceOrientationMask = .all
+    static var supportedOrientations: UIInterfaceOrientationMask = .all
     
-    static func setAllOrientations() {
-        allowedOrientations = .all
+    static func enableAllOrientations() {
+        supportedOrientations = .all
     }
     
-    static func setLandscapeOnly() {
-        allowedOrientations = [.landscapeLeft, .landscapeRight]
+    static func restrictToLandscape() {
+        supportedOrientations = [.landscapeLeft, .landscapeRight]
     }
     
-    static func setPortraitOnly() {
-        allowedOrientations = [.portrait, .portraitUpsideDown]
+    static func restrictToPortrait() {
+        supportedOrientations = [.portrait, .portraitUpsideDown]
     }
 }

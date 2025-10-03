@@ -56,7 +56,7 @@ struct LoadingView: View {
         }
         .onAppear {
             // Устанавливаем портретную ориентацию
-            OrientationManager.setPortraitOnly()
+            OrientationManager.restrictToPortrait()
             
             isAnimating = true
             dotOffset = -10

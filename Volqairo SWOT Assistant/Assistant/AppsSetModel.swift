@@ -4,57 +4,57 @@ import AppsFlyerLib
 class AppsSetModel: NSObject, AppsFlyerLibDelegate {
     static let sharedInstance = AppsSetModel()
     
-    private let developerApiKey = "PK67HPkiTnrhFMowkyubfY"
-    private let applicationBundleId = "6753177811"
-    private let isDebugModeEnabled = false
-    private let shouldTrackConversions = true
+    private let trackingApiKey = "PK67HPkiTnrhFMowkyubfY"
+    private let appStoreId = "6753177811"
+    private let debugModeActive = false
+    private let conversionTrackingEnabled = true
     
     private override init() {
         super.init()
-        initializeAnalytics()
+        setupTrackingSDK()
     }
     
-    private func initializeAnalytics() {
-        AppsFlyerLib.shared().appsFlyerDevKey = developerApiKey
-        AppsFlyerLib.shared().appleAppID = applicationBundleId
-        AppsFlyerLib.shared().isDebug = isDebugModeEnabled
+    private func setupTrackingSDK() {
+        AppsFlyerLib.shared().appsFlyerDevKey = trackingApiKey
+        AppsFlyerLib.shared().appleAppID = appStoreId
+        AppsFlyerLib.shared().isDebug = debugModeActive
         AppsFlyerLib.shared().delegate = self
         AppsFlyerLib.shared().start()
     }
     
-    func onConversionDataSuccess(_ conversionData: [AnyHashable : Any]) {
-        var enhancedData = conversionData
-        enhancedData["af_id"] = AppsFlyerLib.shared().getAppsFlyerUID()
-        enhancedData["locale"] = Locale.current.identifier
-        enhancedData["store_id"] = "id6753177811"
-        enhancedData["os"] = "iOS"
-        enhancedData["bundle_id"] = "com.toxismtieqjocota.uvesfaspswasivxon"
+    func onConversionDataSuccess(_ attributionData: [AnyHashable : Any]) {
+        var enrichedData = attributionData
+        enrichedData["af_id"] = AppsFlyerLib.shared().getAppsFlyerUID()
+        enrichedData["locale"] = Locale.current.identifier
+        enrichedData["store_id"] = "id6753177811"
+        enrichedData["os"] = "iOS"
+        enrichedData["bundle_id"] = "com.toxismtieqjocota.uvesfaspswasivxon"
         
-        persistAnalyticsData(enhancedData)
+        storeTrackingData(enrichedData)
     }
     
     func onConversionDataFail(_ error: Error) {
-        persistAnalyticsData(nil)
+        storeTrackingData(nil)
     }
     
-    func onAppOpenAttribution(_ attributionData: [AnyHashable : Any]) {
-        persistAnalyticsData(nil)
+    func onAppOpenAttribution(_ deepLinkData: [AnyHashable : Any]) {
+        storeTrackingData(nil)
     }
     
     func onAppOpenAttributionFailure(_ error: Error) {
-        persistAnalyticsData(nil)
+        storeTrackingData(nil)
     }
     
-    private func persistAnalyticsData(_ data: [AnyHashable : Any]?) {
+    private func storeTrackingData(_ data: [AnyHashable : Any]?) {
         guard let data = data else {
             UserDefaults.standard.removeObject(forKey: "ANALYTICS_DATA_STRING")
             return
         }
         
         do {
-            let jsonData = try JSONSerialization.data(withJSONObject: data, options: [])
-            let jsonString = String(data: jsonData, encoding: .utf8)
-            UserDefaults.standard.set(jsonString, forKey: "ANALYTICS_DATA_STRING")
+            let serializedData = try JSONSerialization.data(withJSONObject: data, options: [])
+            let dataString = String(data: serializedData, encoding: .utf8)
+            UserDefaults.standard.set(dataString, forKey: "ANALYTICS_DATA_STRING")
         } catch {
         }
     }

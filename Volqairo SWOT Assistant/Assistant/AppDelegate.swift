@@ -11,18 +11,18 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         _ = AppsSetModel.sharedInstance
         FirebaseApp.configure()
         
-        let initialLaunchKey = "APP_INITIAL_LAUNCH_FLAG"
-        if UserDefaults.standard.object(forKey: initialLaunchKey) == nil {
-            UserDefaults.standard.set(true, forKey: initialLaunchKey)
+        let firstRunKey = "APPLICATION_FIRST_RUN_STATUS"
+        if UserDefaults.standard.object(forKey: firstRunKey) == nil {
+            UserDefaults.standard.set(true, forKey: firstRunKey)
         } else {
-            UserDefaults.standard.set(false, forKey: initialLaunchKey)
+            UserDefaults.standard.set(false, forKey: firstRunKey)
         }
         
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
         
-        if let remoteNotification = launchOptions?[.remoteNotification] as? [AnyHashable: Any] {
-            UserDefaults.standard.set(remoteNotification, forKey: "PENDING_NOTIFICATION_DATA")
+        if let pushPayload = launchOptions?[.remoteNotification] as? [AnyHashable: Any] {
+            UserDefaults.standard.set(pushPayload, forKey: "PENDING_NOTIFICATION_DATA")
             UserDefaults.standard.set(true, forKey: "PUSH_LAUNCH_FLAG")
         }
         
@@ -31,16 +31,16 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
-        Messaging.messaging().token { token, error in
-            if let token = token {
-                UserDefaults.standard.set(token, forKey: "FIREBASE_MESSAGING_TOKEN")
+        Messaging.messaging().token { fcmToken, error in
+            if let fcmToken = fcmToken {
+                UserDefaults.standard.set(fcmToken, forKey: "FCM_DEVICE_TOKEN")
             }
         }
     }
     
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        if let _ = userInfo["url"] as? String {
-            UserDefaults.standard.set(userInfo, forKey: "PENDING_NOTIFICATION_DATA")
+    func application(_ application: UIApplication, didReceiveRemoteNotification notificationData: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        if let _ = notificationData["url"] as? String {
+            UserDefaults.standard.set(notificationData, forKey: "PENDING_NOTIFICATION_DATA")
             UserDefaults.standard.set(true, forKey: "PUSH_LAUNCH_FLAG")
         }
         completionHandler(.newData)
@@ -52,35 +52,33 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        // Показываем уведомление даже когда приложение в foreground
         completionHandler([.alert, .badge, .sound])
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        let notificationUserInfo = response.notification.request.content.userInfo
-        if let urlString = notificationUserInfo["url"] as? String {
-            // Очищаем предыдущие данные push-уведомлений перед сохранением новых
+        let pushData = response.notification.request.content.userInfo
+        if let urlString = pushData["url"] as? String {
             UserDefaults.standard.removeObject(forKey: "PENDING_NOTIFICATION_DATA")
             UserDefaults.standard.removeObject(forKey: "PUSH_LAUNCH_FLAG")
-            UserDefaults.standard.set(notificationUserInfo, forKey: "PENDING_NOTIFICATION_DATA")
+            UserDefaults.standard.set(pushData, forKey: "PENDING_NOTIFICATION_DATA")
             UserDefaults.standard.set(true, forKey: "PUSH_LAUNCH_FLAG")
             DispatchQueue.main.async {
-                StartingModel.sharedController.terminateAllActiveTimers()
-                StartingModel.sharedController.presentWebView(url: urlString)
+                StartingModel.sharedController.stopAllRunningTimers()
+                StartingModel.sharedController.displayWebInterface(url: urlString)
             }
         }
         completionHandler()
     }
     
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        if UserDefaults.standard.bool(forKey: "APP_INITIAL_LAUNCH_FLAG") {
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken registrationToken: String?) {
+        if UserDefaults.standard.bool(forKey: "APPLICATION_FIRST_RUN_STATUS") {
             return
         }
-        guard let token = fcmToken else { return }
-        UserDefaults.standard.set(token, forKey: "FIREBASE_MESSAGING_TOKEN")
+        guard let token = registrationToken else { return }
+        UserDefaults.standard.set(token, forKey: "FCM_DEVICE_TOKEN")
     }
     
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        return OrientationManager.allowedOrientations
+        return OrientationManager.supportedOrientations
     }
 }

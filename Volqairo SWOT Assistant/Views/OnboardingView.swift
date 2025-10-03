@@ -75,8 +75,7 @@ struct OnboardingView: View {
                             Text("Previous")
                                 .font(.headline)
                                 .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
+                                .frame(width: 120, height: 50)
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
                                         .fill(Color(red: 0.2, green: 0.2, blue: 0.2))
@@ -96,8 +95,7 @@ struct OnboardingView: View {
                         Text(currentPage < totalPages - 1 ? "Next" : "Get Started")
                             .font(.headline)
                             .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
+                            .frame(width: 120, height: 50)
                             .background(
                                 LinearGradient(
                                     colors: [.orange, .red],
@@ -108,14 +106,13 @@ struct OnboardingView: View {
                             .cornerRadius(12)
                     }
                 }
-                .frame(maxWidth: 400) // Ограничиваем ширину кнопок
                 .padding(.horizontal, 40)
                 .padding(.bottom, 50)
             }
         }
         .onAppear {
             // Устанавливаем портретную ориентацию
-            OrientationManager.setPortraitOnly()
+            OrientationManager.restrictToPortrait()
         }
     }
 }
